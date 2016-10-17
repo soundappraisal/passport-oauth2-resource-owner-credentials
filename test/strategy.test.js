@@ -193,8 +193,7 @@ describe('OAuth2ResourceOwnerStrategy', function () {
     var strategy = new OAuth2ResourceOwnerStrategy({
         tokenURL: 'https://www.example.com/oauth2/token',
         clientID: 'ABC123',
-        clientSecret: 'secret',
-        callbackURL: 'https://www.example.net/auth/example/callback',
+        clientSecret: 'secret'
       },
       function(accessToken, refreshToken, profile, done) {
         if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
