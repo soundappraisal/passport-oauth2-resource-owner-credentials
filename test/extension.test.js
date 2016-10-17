@@ -28,7 +28,7 @@ describe('OAuth2Strategy extension', function () {
 
   // overload with dummy AccessToken function
   strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
-    if (code !== 'password') { return callback(new Error('incorrect code argument')); }
+    if (code !== '') { return callback(new Error('incorrect code argument')); }
     if (options.username !== 'Testuser') { return callback(new Error('incorrect username argument')); }
     if (options.password !== 'password') { return callback(new Error('incorrect password argument')); }
     if (options.grant_type !== 'password' && options.grant_type !== 'refresh_token') {
