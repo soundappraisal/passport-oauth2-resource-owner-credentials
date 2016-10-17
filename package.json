@@ -1,7 +1,7 @@
 {
-  "name": "passport-oauth2-resource-owner",
+  "name": "passport-oauth2-resource-owner-credentials",
   "version": "0.0.1",
-  "description": "A generic Passport strategy to authenticate using the OAuth2 Resource Owner Credentials Flow to a specific endpoint",
+  "description": "A generic Passport strategy to authenticate using the OAuth2 Resource Owner Credentials Flow to a generic third party endpoint",
   "main": "./lib",
   "scripts": {
     "test": "node_modules/.bin/mocha --reporter spec --require test/bootstrap/node test/*.test.js test/**/*.test.js"
@@ -18,9 +18,9 @@
   "author": "Arryon Tijsma <arryon@soundappraisal.eu>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/soundappraisal/passport-oauth2-resource-owner/issues"
+    "url": "https://github.com/soundappraisal/passport-oauth2-resource-owner-credentials/issues"
   },
-  "homepage": "https://github.com/soundappraisal/passport-oauth2-resource-owner#readme",
+  "homepage": "https://github.com/soundappraisal/passport-oauth2-resource-owner-credentials#readme",
   "dependencies": {
     "oauth": "^0.9.14",
     "passport-oauth2": "^1.3.0",
