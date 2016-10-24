@@ -18,12 +18,12 @@ describe('OAuth2Strategy extension', function () {
       clientSecret: 'secret',
       callbackURL: 'https://www.example.net/auth/example/callback',
     },
-    function(accessToken, refreshToken, profile, done) {
+    function(accessToken, refreshToken, params, profile, done) {
       if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
       if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
       if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
 
-      return done(null, { id: '1234', username: profile.username}, { message: 'Hello' });
+      return done(null, { id: '1234', username: profile.username}, params);
     });
 
   // overload with dummy AccessToken function
@@ -35,7 +35,7 @@ describe('OAuth2Strategy extension', function () {
       return callback(new Error('incorrect options.grant_type argument'));
     }
     if (options.redirect_uri !== undefined) { return callback(new Error('incorrect options.redirect_uri argument')); }
-    return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
+    return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example', expires_in: 3600 });
   }
 
   describe('that overwrites userProfile', function () {
@@ -69,6 +69,10 @@ describe('OAuth2Strategy extension', function () {
 
     it('Should return the correct user', function () {
       expect(user.username).to.equal('Joe Sixpack');
+    });
+
+    it('Should store the "expires_in" field from info', function () {
+      expect(info.expires_in).to.equal(3600);
     });
   });
 });

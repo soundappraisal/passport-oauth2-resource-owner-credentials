@@ -213,7 +213,7 @@ describe('OAuth2ResourceOwnerStrategy', function () {
         return callback(new Error('incorrect options.grant_type argument'));
       }
       if (options.redirect_uri !== undefined) { return callback(new Error('incorrect options.redirect_uri argument')); }
-      return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example' });
+      return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example', expires_in: 3600 });
     }
 
     describe('using valid parameters', function () {
@@ -239,13 +239,64 @@ describe('OAuth2ResourceOwnerStrategy', function () {
         expect(user).to.be.an.object;
         expect(user.id).to.equal('1234');
       });
-      it('should return a valid info message', function () {
+      it('should return a valid info object', function () {
         expect(info).to.be.an.object;
         expect(info.message).to.equal('Hello');
       });
     }); //using valid parameters
 
   }); // issuing authorization
+
+  describe('using an extra params argument in the verify function', function () {
+    var strategy = new OAuth2ResourceOwnerStrategy({
+        tokenURL: 'https://www.example.com/oauth2/token',
+        clientID: 'ABC123',
+        clientSecret: 'secret',
+        callbackURL: 'https://www.example.net/auth/example/callback',
+      },
+      function(accessToken, refreshToken, params, profile, done) {
+        if (accessToken !== '2YotnFZFEjr1zCsicMWpAA') { return done(new Error('incorrect accessToken argument')); }
+        if (refreshToken !== 'tGzv3JOkF0XG5Qx2TlKWIA') { return done(new Error('incorrect refreshToken argument')); }
+        if (typeof profile !== 'object') { return done(new Error('incorrect profile argument')); }
+        if (Object.keys(profile).length !== 0) { return done(new Error('incorrect profile argument')); }
+
+        return done(null, { id: '1234' }, params);
+      });
+
+    // overload with dummy AccessToken function
+    strategy._oauth2.getOAuthAccessToken = function(code, options, callback) {
+      if (code !== 'password') { return callback(new Error('incorrect code argument')); }
+      if (options.username !== 'Testuser') { return callback(new Error('incorrect username argument')); }
+      if (options.password !== 'password') { return callback(new Error('incorrect password argument')); }
+      if (options.grant_type !== 'password' && options.grant_type !== 'refresh_token') {
+        return callback(new Error('incorrect options.grant_type argument'));
+      }
+      if (options.redirect_uri !== undefined) { return callback(new Error('incorrect options.redirect_uri argument')); }
+      return callback(null, '2YotnFZFEjr1zCsicMWpAA', 'tGzv3JOkF0XG5Qx2TlKWIA', { token_type: 'example', expires_in: 3600 });
+    }
+    var user, info;
+    before(function(done) {
+      chai.passport.use(strategy)
+        .success(function(u, i) {
+          user = u;
+          info = i;
+          done();
+        })
+        .req(function(req) {
+          req.query = {};
+          req.body = {
+            username: 'Testuser',
+            password: 'password'
+          }
+        })
+        .authenticate();
+    });
+
+    it('should store the extra params in info', function () {
+      expect(info.token_type).to.equal('example');
+      expect(info.expires_in).to.equal(3600);
+    });
+  });
 
   describe('using alternative field names', function () {
     var strategy = new OAuth2ResourceOwnerStrategy({

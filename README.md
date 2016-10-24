@@ -4,7 +4,7 @@
 
 A generic [Passport](http://passportjs.org) strategy to authenticate using the OAuth2 Resource Owner Credentials Flow to a specific endpoint.
 
-**This strategy is used to get an Access Token (plus Refresh Token) from a third party endpoint (not implemented here) as a CLIENT (not a server) by using a combination of client ID, client secret, username, and password**
+**This strategy is used to get an Access Token (plus Refresh Token) from a third party endpoint (not implemented here) as a CONSUMER by using a combination of client ID, client secret, username, and password**
 *(there seems to be a lot of confusion around the subject, so therefore the clarification)*
 
 This OAuth2 flow is designed for authentication between two parties that have an implicit amount of trust. The user gives his/her credentials to the client, so from an endpoint perspective, only use this strategy if the client can be trusted (for instance, if you are creator of both the OAuth2 endpoint, and the client).
@@ -96,6 +96,26 @@ strategy.prototype.userProfile = function (access_token, done) {
 }
 
 passport.use(new OAuth2ResourceOwnerStrategy({/*...*/}));
+```
+
+### Getting the expiry of the access token
+You can use the extra `param` argument in the verify function to grab the parameters from the OAuth endpoint, such as token type and expiry:
+
+```js
+passport.use(new OAuth2ResourceOwnerStrategy({
+    tokenURL: 'https://www.example.com/oauth/token',
+    clientID: EXAMPLE_CLIENT_ID,
+    clientSecret: EXAMPLE_CLIENT_SECRET
+  },
+  function (access_token, refresh_token, params, profile, done) {
+    // params contains the 'expires_in' value, as well as token_type
+    
+    // your app logic here... (store tokens, create user, etc)
+    User.findOne({id: profile.id}, function (err, user) {
+      return cb(err, user);
+    }
+  }
+));
 ```
 
 ## License

@@ -1,6 +1,6 @@
 {
   "name": "passport-oauth2-resource-owner-credentials",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A generic Passport strategy to authenticate using the OAuth2 Resource Owner Credentials Flow to a generic third party endpoint",
   "main": "./lib",
   "scripts": {
